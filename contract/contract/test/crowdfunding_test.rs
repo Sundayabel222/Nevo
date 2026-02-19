@@ -1287,14 +1287,28 @@ fn test_global_raised_total_increases_across_campaigns() {
     let goal = 10_000i128;
     let deadline = env.ledger().timestamp() + 86400;
 
-    client.create_campaign(&campaign_id_1, &title1, &creator, &goal, &deadline, &token_id);
+    client.create_campaign(
+        &campaign_id_1,
+        &title1,
+        &creator,
+        &goal,
+        &deadline,
+        &token_id,
+    );
 
     // Create second campaign
     let creator2 = Address::generate(&env);
     let campaign_id_2 = create_test_campaign_id(&env, 204);
     let title2 = String::from_str(&env, "Campaign Two");
 
-    client.create_campaign(&campaign_id_2, &title2, &creator2, &goal, &deadline, &token_id);
+    client.create_campaign(
+        &campaign_id_2,
+        &title2,
+        &creator2,
+        &goal,
+        &deadline,
+        &token_id,
+    );
 
     // Initial global total should be 0
     assert_eq!(client.get_global_raised_total(), 0);

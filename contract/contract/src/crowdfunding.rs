@@ -300,11 +300,7 @@ impl CrowdfundingTrait for CrowdfundingContract {
 
         // Update global total raised
         let global_key = StorageKey::GlobalTotalRaised;
-        let global_total: i128 = env
-            .storage()
-            .instance()
-            .get(&global_key)
-            .unwrap_or(0);
+        let global_total: i128 = env.storage().instance().get(&global_key).unwrap_or(0i128);
         env.storage()
             .instance()
             .set(&global_key, &(global_total + amount));
