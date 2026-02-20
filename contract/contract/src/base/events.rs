@@ -115,4 +115,3 @@ pub fn platform_fees_withdrawn(env: &Env, admin: Address, amount: i128) {
     let topics = (Symbol::new(env, "platform_fees_withdrawn"), admin);
     env.events().publish(topics, amount);
 }
-

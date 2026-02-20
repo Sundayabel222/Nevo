@@ -66,8 +66,14 @@ impl CrowdfundingTrait for CrowdfundingContract {
 
             // Track platform fees
             let platform_fees_key = StorageKey::PlatformFees;
-            let current_fees: i128 = env.storage().instance().get(&platform_fees_key).unwrap_or(0);
-            env.storage().instance().set(&platform_fees_key, &(current_fees + creation_fee));
+            let current_fees: i128 = env
+                .storage()
+                .instance()
+                .get(&platform_fees_key)
+                .unwrap_or(0);
+            env.storage()
+                .instance()
+                .set(&platform_fees_key, &(current_fees + creation_fee));
 
             events::creation_fee_paid(&env, creator.clone(), creation_fee);
         }
@@ -1033,7 +1039,11 @@ impl CrowdfundingTrait for CrowdfundingContract {
         }
 
         let platform_fees_key = StorageKey::PlatformFees;
-        let current_fees: i128 = env.storage().instance().get(&platform_fees_key).unwrap_or(0);
+        let current_fees: i128 = env
+            .storage()
+            .instance()
+            .get(&platform_fees_key)
+            .unwrap_or(0);
 
         if amount > current_fees {
             return Err(CrowdfundingError::InsufficientFees);

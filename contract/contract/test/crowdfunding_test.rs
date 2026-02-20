@@ -2698,7 +2698,14 @@ fn test_withdraw_platform_fees_success() {
     let goal = 10_000i128;
     let deadline = env.ledger().timestamp() + 86400;
 
-    client.create_campaign(&campaign_id, &title, &creator, &goal, &deadline, &token_address);
+    client.create_campaign(
+        &campaign_id,
+        &title,
+        &creator,
+        &goal,
+        &deadline,
+        &token_address,
+    );
 
     let token_client = token::Client::new(&env, &token_address);
     let admin_balance_before = token_client.balance(&admin);
@@ -2713,7 +2720,7 @@ fn test_withdraw_platform_fees_success() {
 fn test_withdraw_platform_fees_non_admin_fails() {
     let env = Env::default();
     let (client, _, token_address) = setup_test(&env);
-    
+
     client.set_creation_fee(&100);
 
     let creator = Address::generate(&env);
@@ -2725,7 +2732,14 @@ fn test_withdraw_platform_fees_non_admin_fails() {
     let goal = 10_000i128;
     let deadline = env.ledger().timestamp() + 86400;
 
-    client.create_campaign(&campaign_id, &title, &creator, &goal, &deadline, &token_address);
+    client.create_campaign(
+        &campaign_id,
+        &title,
+        &creator,
+        &goal,
+        &deadline,
+        &token_address,
+    );
 
     let non_admin = Address::generate(&env);
     let res = client.try_withdraw_platform_fees(&non_admin, &100);
@@ -2736,7 +2750,7 @@ fn test_withdraw_platform_fees_non_admin_fails() {
 fn test_withdraw_platform_fees_insufficient_fees() {
     let env = Env::default();
     let (client, admin, _) = setup_test(&env);
-    
+
     let res = client.try_withdraw_platform_fees(&admin, &100);
     assert_eq!(res, Err(Ok(CrowdfundingError::InsufficientFees)));
 }
