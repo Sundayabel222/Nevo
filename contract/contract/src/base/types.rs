@@ -276,7 +276,6 @@ pub enum StorageKey {
     ReentrancyLock(u64),
     EmergencyWithdrawalLock,
     PoolCreator(u64),
-    PlatformFeeBps,
     // Per-pool revenue split: tokens destined for the event creator
     EventPool(u64),
     // Per-pool revenue split: tokens accumulated as platform fee
