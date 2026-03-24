@@ -158,3 +158,8 @@ pub fn pool_metadata_updated(env: &Env, pool_id: u64, updater: Address, new_meta
     let topics = (Symbol::new(env, "pool_metadata_updated"), pool_id, updater);
     env.events().publish(topics, new_metadata_hash);
 }
+
+pub fn platform_fee_bps_set(env: &Env, admin: Address, fee_bps: u32) {
+    let topics = (Symbol::new(env, "platform_fee_bps_set"), admin);
+    env.events().publish(topics, fee_bps);
+}

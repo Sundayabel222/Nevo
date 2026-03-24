@@ -229,6 +229,33 @@ impl CrowdfundingTrait for CrowdfundingContract {
             .unwrap_or(0))
     }
 
+    fn set_platform_fee_bps(env: Env, fee_bps: u32) -> Result<(), CrowdfundingError> {
+        let admin: Address = env
+            .storage()
+            .instance()
+            .get(&StorageKey::Admin)
+            .ok_or(CrowdfundingError::NotInitialized)?;
+        admin.require_auth();
+
+        if fee_bps > 10_000 {
+            return Err(CrowdfundingError::InvalidFee);
+        }
+
+        env.storage()
+            .instance()
+            .set(&StorageKey::PlatformFeeBps, &fee_bps);
+        events::platform_fee_bps_set(&env, admin, fee_bps);
+        Ok(())
+    }
+
+    fn get_platform_fee_bps(env: Env) -> Result<u32, CrowdfundingError> {
+        Ok(env
+            .storage()
+            .instance()
+            .get(&StorageKey::PlatformFeeBps)
+            .unwrap_or(0))
+    }
+
     fn get_global_raised_total(env: Env) -> i128 {
         env.storage()
             .instance()

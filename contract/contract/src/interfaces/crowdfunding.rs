@@ -182,4 +182,8 @@ pub trait CrowdfundingTrait {
     ) -> Result<Vec<PoolContribution>, CrowdfundingError>;
 
     fn get_pool_remaining_time(env: Env, pool_id: u64) -> Result<u64, CrowdfundingError>;
+
+    fn set_platform_fee_bps(env: Env, fee_bps: u32) -> Result<(), CrowdfundingError>;
+
+    fn get_platform_fee_bps(env: Env) -> Result<u32, CrowdfundingError>;
 }
