@@ -143,19 +143,14 @@ pub enum EventStatus {
 /// Represents the type of a ticket.
 /// Standard is the default type.
 #[contracttype]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 #[repr(u32)]
 pub enum TicketType {
     /// Standard ticket for general access.
+    #[default]
     Standard = 0,
     /// VIP ticket for premium access.
     VIP = 1,
-}
-
-impl Default for TicketType {
-    fn default() -> Self {
-        TicketType::Standard
-    }
 }
 
 #[contracttype]

@@ -1,8 +1,9 @@
 #![allow(deprecated)]
 use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, String, Vec};
 
+use crate::base::errors::SecondCrowdfundingError;
 use crate::base::{
-    errors::{CrowdfundingError, SecondCrowdfundingError},
+    errors::CrowdfundingError,
     events,
     reentrancy::{
         acquire_emergency_lock, reentrancy_lock_logic, release_emergency_lock, release_pool_lock,
@@ -15,6 +16,7 @@ use crate::base::{
     },
 };
 use crate::interfaces::crowdfunding::CrowdfundingTrait;
+#[cfg(test)]
 use crate::interfaces::second_crowdfunding::SecondCrowdfundingTrait;
 
 #[contract]
@@ -316,7 +318,7 @@ impl CrowdfundingTrait for CrowdfundingContract {
         // Transfer full price from buyer to contract
         use soroban_sdk::token;
         let token_client = token::Client::new(&env, &asset);
-        token_client.transfer(&buyer, &env.current_contract_address(), &price);
+        token_client.transfer(&buyer, env.current_contract_address(), &price);
 
         // Credit event pool
         let event_pool_key = StorageKey::EventPool(pool_id);
@@ -331,6 +333,17 @@ impl CrowdfundingTrait for CrowdfundingContract {
         env.storage()
             .instance()
             .set(&event_fee_key, &(current_fees + fee_amount));
+
+        let event_fee_treasury_key = StorageKey::EventFeeTreasury;
+        let current_event_fee_treasury: i128 = env
+            .storage()
+            .instance()
+            .get(&event_fee_treasury_key)
+            .unwrap_or(0);
+        env.storage().instance().set(
+            &event_fee_treasury_key,
+            &(current_event_fee_treasury + fee_amount),
+        );
 
         events::ticket_sold(&env, pool_id, buyer, price, event_amount, fee_amount);
 
@@ -933,12 +946,14 @@ impl CrowdfundingTrait for CrowdfundingContract {
         events::pool_created(
             &env,
             pool_id,
-            config.name.clone(),
-            config.description.clone(),
             creator.clone(),
-            config.target_amount,
-            config.min_contribution,
-            deadline,
+            (
+                config.name.clone(),
+                config.description.clone(),
+                config.target_amount,
+                config.min_contribution,
+                deadline,
+            ),
         );
 
         events::event_created(
@@ -1065,12 +1080,14 @@ impl CrowdfundingTrait for CrowdfundingContract {
         events::pool_created(
             &env,
             pool_id,
-            name,
-            metadata.description.clone(),
             creator,
-            target_amount,
-            0,
-            deadline,
+            (
+                name,
+                metadata.description.clone(),
+                target_amount,
+                0,
+                deadline,
+            ),
         );
 
         Ok(pool_id)
@@ -1609,7 +1626,7 @@ impl CrowdfundingTrait for CrowdfundingContract {
             .ok_or(CrowdfundingError::NotInitialized)?;
 
         // Check authorization: caller must be either the pool creator or admin
-        let is_creator = creator.as_ref().map_or(false, |c| c == &caller);
+        let is_creator = creator.as_ref() == Some(&caller);
         let is_admin = caller == admin;
 
         if !is_creator && !is_admin {
@@ -1871,6 +1888,7 @@ impl CrowdfundingContract {
     }
 }
 
+#[cfg(test)]
 impl SecondCrowdfundingTrait for CrowdfundingContract {
     /// Validates that `title` does not exceed the maximum allowed length and,
     /// if the check passes, delegates to the primary `create_campaign`
