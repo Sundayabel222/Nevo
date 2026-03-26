@@ -39,6 +39,7 @@ pub struct PoolConfig {
     pub is_private: bool,
     pub duration: u64,
     pub created_at: u64,
+    pub token_address: Address,
 }
 
 #[contracttype]
@@ -286,11 +287,12 @@ pub enum StorageKey {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use soroban_sdk::Env;
+    use soroban_sdk::{testutils::Address as _, Address, Env};
 
     #[test]
     fn pool_config_validation_success() {
         let env = Env::default();
+        let token = Address::generate(&env);
         let cfg = PoolConfig {
             name: String::from_str(&env, "Education Fund"),
             description: String::from_str(&env, "Fund for student education materials"),
@@ -299,6 +301,7 @@ mod tests {
             is_private: false,
             duration: 30 * 24 * 60 * 60,
             created_at: 1,
+            token_address: token,
         };
 
         cfg.validate();
@@ -308,6 +311,7 @@ mod tests {
     #[should_panic]
     fn pool_config_invalid_target_amount_panics() {
         let env = Env::default();
+        let token = Address::generate(&env);
         let cfg = PoolConfig {
             name: String::from_str(&env, "Invalid Target"),
             description: String::from_str(&env, "Description"),
@@ -316,6 +320,7 @@ mod tests {
             is_private: false,
             duration: 30 * 24 * 60 * 60,
             created_at: 1,
+            token_address: token,
         };
 
         cfg.validate();

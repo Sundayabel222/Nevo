@@ -893,8 +893,15 @@ impl CrowdfundingTrait for CrowdfundingContract {
         // Validate config
         config.validate();
 
-        // Extra validation (if any, e.g. duration checks not covered by validate)
-        // For now relying on PoolConfig::validate
+        // Validate that the provided token matches the platform's accepted token
+        let token_key = StorageKey::CrowdfundingToken;
+        if !env.storage().instance().has(&token_key) {
+            return Err(CrowdfundingError::NotInitialized);
+        }
+        let platform_token: Address = env.storage().instance().get(&token_key).unwrap();
+        if config.token_address != platform_token {
+            return Err(CrowdfundingError::InvalidToken);
+        }
 
         // Generate unique pool ID
         let next_id_key = StorageKey::NextPoolId;
@@ -1025,6 +1032,13 @@ impl CrowdfundingTrait for CrowdfundingContract {
         let now = env.ledger().timestamp();
         let duration = deadline.saturating_sub(now);
 
+        // Get the platform token for the pool config
+        let platform_token: Address = env
+            .storage()
+            .instance()
+            .get(&StorageKey::CrowdfundingToken)
+            .unwrap_or(creator.clone());
+
         // Create pool configuration (persistent view)
         let pool_config = PoolConfig {
             name: name.clone(),
@@ -1034,6 +1048,7 @@ impl CrowdfundingTrait for CrowdfundingContract {
             is_private: false,
             duration,
             created_at: now,
+            token_address: platform_token,
         };
 
         // Store pool configuration

@@ -48,6 +48,7 @@ fn test_get_pool_contributions_paginated_with_10_contributors() {
         target_amount: 10_000_000,
         min_contribution: 1000,
         is_private: false,
+        token_address: token_client.address.clone(),
         duration: 30 * 24 * 60 * 60, // 30 days
         created_at: env.ledger().timestamp(),
     };
@@ -115,7 +116,7 @@ fn test_get_pool_contributions_paginated_empty_pool() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, _admin, _token_client) = setup_contract(&env);
+    let (client, _admin, token_client) = setup_contract(&env);
 
     // Create a pool with no contributions
     let creator = Address::generate(&env);
@@ -125,6 +126,7 @@ fn test_get_pool_contributions_paginated_empty_pool() {
         target_amount: 5_000_000,
         min_contribution: 1000,
         is_private: false,
+        token_address: token_client.address.clone(),
         duration: 30 * 24 * 60 * 60,
         created_at: env.ledger().timestamp(),
     };
@@ -142,7 +144,7 @@ fn test_get_pool_contributions_paginated_nonexistent_pool() {
     let env = Env::default();
     env.mock_all_auths();
 
-    let (client, _admin, _token_client) = setup_contract(&env);
+    let (client, _admin, token_client) = setup_contract(&env);
 
     // Try to fetch contributions from a non-existent pool
     client.get_pool_contributions_paginated(&999, &0, &5);
@@ -163,6 +165,7 @@ fn test_get_pool_contributions_paginated_single_contributor_multiple_contributio
         target_amount: 10_000_000,
         min_contribution: 1000,
         is_private: false,
+        token_address: token_client.address.clone(),
         duration: 30 * 24 * 60 * 60,
         created_at: env.ledger().timestamp(),
     };
