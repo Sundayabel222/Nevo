@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 // import { Anton } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ToastProvider, ToastContainer } from "@/components/ui/toast";
 import PageProgressWrapper from "@/components/PageProgressWrapper";
 import ScrollButton from "@/components/ScrollButton";
 
@@ -86,6 +87,13 @@ export const metadata: Metadata = {
       },
     ],
   },
+import "./globals.css";
+import { ToastProvider, ToastContainer } from "@/components/ui/toast";
+
+export const metadata: Metadata = {
+  title: "Nevo - Secure Donation Pools on Stellar",
+  description:
+    "Create transparent, secure donation pools on Stellar blockchain with low fees and DeFi yield generation.",
 };
 
 export default function RootLayout({
@@ -99,10 +107,16 @@ export default function RootLayout({
         className={`bg-no-repeat bg-fixed bg h-full bg-cover antialiased font-dmsans relative`}
         suppressHydrationWarning={true}
       >
-        <PageProgressWrapper />
-        <ScrollButton />
-        <main className="">{children}</main>
-        <Toaster />
+        <ToastProvider>
+          <PageProgressWrapper />
+          <ScrollButton />
+          <main className="">{children}</main>
+          <Toaster />
+      <body suppressHydrationWarning={true}>
+        <ToastProvider>
+          <main>{children}</main>
+          <ToastContainer />
+        </ToastProvider>
       </body>
     </html>
   );

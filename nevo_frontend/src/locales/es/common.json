@@ -1,0 +1,24 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "pools": "Pools",
+    "donations": "Donaciones",
+    "transactions": "Transacciones",
+    "dashboard": "Panel",
+    "profile": "Perfil",
+    "createPool": "Crear Pool"
+  },
+  "menu": {
+    "title": "Menú",
+    "close": "Cerrar menú"
+  },
+  "actions": {
+    "connectWallet": "Conectar Billetera",
+    "disconnect": "Desconectar"
+  },
+  "language": {
+    "label": "Idioma",
+    "english": "English",
+    "spanish": "Español"
+  }
+}
